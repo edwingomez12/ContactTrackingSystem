@@ -105,6 +105,7 @@ namespace CandidateTracking.Migrations
 
                     b.Property<string>("ResidentialZipCode")
                         .IsRequired()
+                        .HasMaxLength(5)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

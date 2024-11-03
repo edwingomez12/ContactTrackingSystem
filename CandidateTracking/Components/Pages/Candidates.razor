@@ -52,42 +52,41 @@ else
 }
 
 @code {
-private List<Candidate> candidates = new();
-private List<Candidate> filteredCandidates = new();
-private string searchTerm = string.Empty;
+    private List<Candidate> candidates = new();
+    private List<Candidate> filteredCandidates = new();
+    private string searchTerm = string.Empty;
 
-private string SearchTerm
-{
-get => searchTerm;
-set
-{
-searchTerm = value;
-FilterCandidates();
-}
-}
+    private string SearchTerm
+    {
+        get => searchTerm;
+        set
+        {
+        searchTerm = value;
+        FilterCandidates();
+        }
+    }
 
-protected override async Task OnInitializedAsync()
-{
-candidates = await DbContext.Candidates.ToListAsync();
-filteredCandidates = candidates; // Initialize the filtered list
-}
+    protected override async Task OnInitializedAsync()
+    {
+        candidates = await DbContext.Candidates.ToListAsync();
+        filteredCandidates = candidates; // Initialize the filtered list
+    }
 
-private void FilterCandidates()
-{
-Console.WriteLine("Filtering candidates with search term: " + searchTerm); // Debugging line
-
-if (string.IsNullOrWhiteSpace(searchTerm))
-{
-filteredCandidates = candidates; // Show all candidates if search term is empty
-}
-else
-{
-filteredCandidates = candidates
-.Where(c =>
-c.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-c.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-c.EmailAddress.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-.ToList(); // Perform filtering based on the search term
-}
-}
+    private void FilterCandidates()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredCandidates = candidates; 
+        }
+        else
+        {
+            filteredCandidates = candidates
+            .Where(c =>
+                c.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                c.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                c.EmailAddress.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                c.ResidentialZipCode.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            .ToList(); 
+        }
+    }
 }

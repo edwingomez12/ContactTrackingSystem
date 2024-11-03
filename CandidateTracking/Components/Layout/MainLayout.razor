@@ -1,15 +1,45 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
 
+@code {
+    private bool isInitialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Only check on first initialization to avoid infinite redirect loops
+        if (!isInitialized)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            // Get the current URL
+            var currentUri = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+            if (user.Identity is { IsAuthenticated: true } && currentUri != "candidates"
+            && currentUri != "addcandidate")
+            {
+                // Redirect to Candidates page if authenticated and not already there
+                Navigation.NavigateTo("/candidates", forceLoad: true);
+            }
+            else if (user.Identity is { IsAuthenticated: false } && currentUri != "Account/Login")
+            {
+                // Redirect to Login page if not authenticated and not already there
+                Navigation.NavigateTo("Account/Login", forceLoad: true);
+            }
+
+            isInitialized = true;
+        }
+    }
+}
+
+<!-- Page Layout -->
 <div class="page">
     <div class="sidebar">
-        <NavMenu/>
+        <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
         <article class="content px-4">
             @Body
         </article>
