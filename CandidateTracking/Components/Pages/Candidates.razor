@@ -1,0 +1,81 @@
+@page "/candidates"
+@rendermode InteractiveServer
+@using CandidateTracking.Data
+@using CandidateTracking.Models
+@using CandidateTracking.Service
+@using Microsoft.EntityFrameworkCore;
+@inject IApplicationDbContext DbContext
+@inject NavigationManager Navigation
+@inject ICandidateService _candidateService
+
+<h3 class="page-title">Candidates</h3>
+
+<div class="form-group">
+    <label for="searchInput">Search Candidates:</label>
+    <InputText @bind-Value="SearchTerm"
+               class="form-control"
+               id="searchInput"
+               placeholder="Enter name or email..." />
+</div>
+
+@if (filteredCandidates != null && filteredCandidates.Any())
+{
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Address</th>
+        <th>Phone Number</th>
+        <th>Zip Code</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var candidate in filteredCandidates)
+    {
+    <tr>
+        <td>@candidate.FirstName</td>
+        <td>@candidate.LastName</td>
+        <td>@candidate.EmailAddress</td>
+        <td>@candidate.PhoneNumber</td>
+        <td>@candidate.ResidentialZipCode</td>
+    </tr>
+    }
+    </tbody>
+</table>
+}
+else if (filteredCandidates != null)
+{
+<p class="text-center">No candidates found.</p>
+}
+else
+{
+<p>Loading candidates...</p>
+}
+
+@code {
+    private List<Candidate> candidates = new();
+    private List<Candidate> filteredCandidates = new();
+    private string searchTerm = string.Empty;
+
+    private string SearchTerm
+    {
+        get => searchTerm;
+        set
+        {
+        searchTerm = value;
+        FilterCandidates();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        candidates =  DbContext.GetDbSets();
+        filteredCandidates = candidates; 
+    }
+
+    private void FilterCandidates()
+    {
+        filteredCandidates = _candidateService.GetFilteredCandidates(searchTerm, candidates);
+    }
+}
