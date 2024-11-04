@@ -2,9 +2,11 @@
 @rendermode InteractiveServer
 @using CandidateTracking.Data
 @using CandidateTracking.Models
+@using CandidateTracking.Service
 @using Microsoft.EntityFrameworkCore;
 @inject IApplicationDbContext DbContext
 @inject NavigationManager Navigation
+@inject ICandidateService _candidateService
 
 <h3 class="page-title">Candidates</h3>
 
@@ -74,19 +76,6 @@ else
 
     private void FilterCandidates()
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-        {
-            filteredCandidates = candidates; 
-        }
-        else
-        {
-            filteredCandidates = candidates
-            .Where(c =>
-                c.FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                c.LastName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                c.EmailAddress.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                c.ResidentialZipCode.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-            .ToList(); 
-        }
+        filteredCandidates = _candidateService.GetFilteredCandidates(searchTerm, candidates);
     }
 }

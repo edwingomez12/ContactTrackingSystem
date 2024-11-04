@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using CandidateTracking.Components;
 using CandidateTracking.Components.Account;
 using CandidateTracking.Data;
+using CandidateTracking.Service;
 
 namespace CandidateTracking;
 
@@ -21,6 +22,7 @@ public class Program
         builder.Services.AddScoped<IdentityUserAccessor>();
         builder.Services.AddScoped<IdentityRedirectManager>();
         builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+        builder.Services.AddScoped<ICandidateService, CandidateService>();
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>()!);
 
         builder.Services.AddAuthentication(options =>
