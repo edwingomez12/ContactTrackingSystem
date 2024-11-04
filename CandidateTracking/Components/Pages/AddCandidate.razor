@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @inject NavigationManager Navigation
-@inject ApplicationDbContext DbContext
+@inject IApplicationDbContext DbContext
 
 <h3 class="page-title">Add Candidate</h3>
 

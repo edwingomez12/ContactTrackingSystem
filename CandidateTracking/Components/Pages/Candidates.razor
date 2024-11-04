@@ -3,7 +3,7 @@
 @using CandidateTracking.Data
 @using CandidateTracking.Models
 @using Microsoft.EntityFrameworkCore;
-@inject ApplicationDbContext DbContext
+@inject IApplicationDbContext DbContext
 @inject NavigationManager Navigation
 
 <h3 class="page-title">Candidates</h3>
@@ -68,8 +68,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        candidates = await DbContext.Candidates.ToListAsync();
-        filteredCandidates = candidates; // Initialize the filtered list
+        candidates =  DbContext.GetDbSets();
+        filteredCandidates = candidates; 
     }
 
     private void FilterCandidates()
