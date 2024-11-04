@@ -5,7 +5,7 @@ using CandidateTracking.Components;
 using CandidateTracking.Components.Account;
 using CandidateTracking.Data;
 using CandidateTracking.Service;
-
+using CandidateTracking.Models;
 namespace CandidateTracking;
 
 public class Program
@@ -44,9 +44,43 @@ public class Program
             .AddDefaultTokenProviders();
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+        
+      
+
 
         var app = builder.Build();
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<ApplicationDbContext>();
 
+            // Ensure the database is created and migrations are applied
+            context.Database.Migrate();
+
+            // Seed data if no candidates are in the database
+            if (!context.Candidates.Any())
+            {
+                context.Candidates.AddRange(
+                    new Candidate 
+                    { 
+                        FirstName = "John", 
+                        LastName = "Doe", 
+                        EmailAddress = "john.doe@example.com", 
+                        PhoneNumber = "123-456-7890", 
+                        ResidentialZipCode = "12345" 
+                    },
+                    new Candidate 
+                    { 
+                        FirstName = "Jane", 
+                        LastName = "Smith", 
+                        EmailAddress = "jane.smith@example.com", 
+                        PhoneNumber = "987-654-3210", 
+                        ResidentialZipCode = "54321" 
+                    }
+                );
+                context.SaveChanges();
+            }
+        }
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
