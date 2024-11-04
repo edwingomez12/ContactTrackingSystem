@@ -22,7 +22,8 @@
                 // Redirect to Candidates page if authenticated and not already there
                 Navigation.NavigateTo("/candidates", forceLoad: true);
             }
-            else if (!user.Identity!.IsAuthenticated && currentUri != "Account/Login" && currentUri != "Account/Register")
+            else if (!user.Identity!.IsAuthenticated && currentUri != "Account/Login" && currentUri != "Account/Register"
+            && !currentUri.Contains("Account/RegisterConfirmation") && !currentUri.Contains("Account/ConfirmEmail"))
             {
                 // Redirect to Login page if not authenticated and not already there
                 Navigation.NavigateTo("Account/Login", forceLoad: true);
